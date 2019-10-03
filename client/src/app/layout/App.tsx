@@ -25,20 +25,27 @@ const App: React.FC = () => {
         setEditMode(true);
     };
 
-    const handleCreateEvent = (event: IEvent) => {
-        setEvents([...events, event]);
-        setSelectedEvent(event);
-        setEditMode(false);
+    const handleCreateEvent = async (event: IEvent) => {
+        agent.Events.create(event).then(() => {
+            setEvents([...events, event]);
+
+            setSelectedEvent(event);
+            setEditMode(false);
+        });
     };
 
     const handleEditEvent = (event: IEvent) => {
-        setEvents([...events.filter(a => a.id !== event.id), event]);
-        setSelectedEvent(event);
-        setEditMode(false);
+        agent.Events.update(event).then(() => {
+            setEvents([...events.filter(a => a.id !== event.id), event]);
+            setSelectedEvent(event);
+            setEditMode(false);
+        });
     };
 
     const handleDeleteEvent = (id: string) => {
-        setEvents([...events.filter(a => a.id !== id)]);
+        agent.Events.delete(id).then(() => {
+            setEvents([...events.filter(a => a.id !== id)]);
+        });
     };
 
     return (
