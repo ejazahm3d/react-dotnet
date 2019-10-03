@@ -8,6 +8,7 @@ import EventDashboard from "../../features/events/dashboard/EventDashboard";
 
 const App: React.FC = () => {
     const [events, setEvents] = useState<IEvent[]>([]);
+    const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
     useEffect(() => {
         axios
             .get<IEvent[]>("http://localhost:5000/api/events")
