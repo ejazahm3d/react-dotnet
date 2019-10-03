@@ -3,8 +3,10 @@ import { List, Tag, Button, FlexboxGrid } from "rsuite";
 import { IEvent } from "../../../app/models/event";
 interface IProps {
     events: IEvent[];
+    selectEvent: (id: string) => void;
+    deleteEvent: (id: string) => void;
 }
-const EventList: React.FC<IProps> = ({ events }) => {
+const EventList: React.FC<IProps> = ({ events, selectEvent, deleteEvent }) => {
     return (
         <List bordered>
             {events.map(event => (
@@ -24,7 +26,19 @@ const EventList: React.FC<IProps> = ({ events }) => {
                             <Tag color="green">{event.category}</Tag>
                         </FlexboxGrid.Item>
                         <FlexboxGrid.Item>
-                            <Button appearance="primary">Details</Button>
+                            <Button
+                                appearance="primary"
+                                onClick={() => selectEvent(event.id)}
+                            >
+                                Details
+                            </Button>
+                            <Button
+                                style={{ marginLeft: 5 }}
+                                color="red"
+                                onClick={() => deleteEvent(event.id)}
+                            >
+                                Delete
+                            </Button>
                         </FlexboxGrid.Item>
                     </FlexboxGrid>
                 </List.Item>
