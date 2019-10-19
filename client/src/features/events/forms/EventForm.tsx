@@ -13,16 +13,18 @@ import { v4 as uuid } from "uuid";
 
 interface IProps {
     setEditMode: (editMode: boolean) => void;
-    selectedEvent: IEvent | null;
+    selectedEvent: IEvent | undefined;
     createEvent: (event: IEvent) => void;
     editEvent: (event: IEvent) => void;
+    submitting: boolean;
 }
 
 const EventForm: React.FC<IProps> = ({
     setEditMode,
     selectedEvent,
     createEvent,
-    editEvent
+    editEvent,
+    submitting
 }) => {
     const initialzeFrom = (): IEvent => {
         if (selectedEvent) return selectedEvent;
@@ -114,10 +116,19 @@ const EventForm: React.FC<IProps> = ({
                 </FormGroup>
 
                 <ButtonGroup justified>
-                    <Button appearance="primary" onClick={handleSubmit}>
+                    <Button
+                        loading={submitting}
+                        appearance="primary"
+                        onClick={handleSubmit}
+                    >
                         Submit
                     </Button>
-                    <Button onClick={() => setEditMode(false)}>Cancel</Button>
+                    <Button
+                        loading={submitting}
+                        onClick={() => setEditMode(false)}
+                    >
+                        Cancel
+                    </Button>
                 </ButtonGroup>
             </Form>
         </Panel>

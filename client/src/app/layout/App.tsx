@@ -1,19 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import { IEvent } from "../models/event";
 import NavBar from "../../features/nav/NavBar";
 import Container from "../../features/container/Container";
 import EventDashboard from "../../features/events/dashboard/EventDashboard";
 import agent from "../api/agent";
+import LoadingComponent from "./LoadingComponent";
+import EventStore from "../stores/eventStore";
+import { observer } from "mobx-react-lite";
 
 const App: React.FC = () => {
+    const eventStore = useContext(EventStore);
+
     const [events, setEvents] = useState<IEvent[]>([]);
     const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
     const [editMode, setEditMode] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        agent.Events.list().then(res => setEvents(res));
-    }, []);
+        eventStore.loadEvents();
+    }, [eventStore]);
 
     const handleSelectedEvent = (id: String): void => {
         setEditMode(false);
@@ -26,46 +32,58 @@ const App: React.FC = () => {
     };
 
     const handleCreateEvent = async (event: IEvent) => {
-        agent.Events.create(event).then(() => {
-            setEvents([...events, event]);
+        setSubmitting(true);
+        agent.Events.create(event)
+            .then(() => {
+                setEvents([...events, event]);
 
-            setSelectedEvent(event);
-            setEditMode(false);
-        });
+                setSelectedEvent(event);
+                setEditMode(false);
+            })
+            .then(() => setSubmitting(false));
     };
 
     const handleEditEvent = (event: IEvent) => {
-        agent.Events.update(event).then(() => {
-            setEvents([...events.filter(a => a.id !== event.id), event]);
-            setSelectedEvent(event);
-            setEditMode(false);
-        });
+        setSubmitting(true);
+        agent.Events.update(event)
+            .then(() => {
+                setEvents([...events.filter(a => a.id !== event.id), event]);
+                setSelectedEvent(event);
+                setEditMode(false);
+            })
+            .then(() => setSubmitting(false));
     };
 
     const handleDeleteEvent = (id: string) => {
-        agent.Events.delete(id).then(() => {
-            setEvents([...events.filter(a => a.id !== id)]);
-        });
+        setSubmitting(true);
+        agent.Events.delete(id)
+            .then(() => {
+                setEvents([...events.filter(a => a.id !== id)]);
+            })
+            .then(() => setSubmitting(false));
     };
 
     return (
         <>
             <NavBar handleOpenCreateForm={handleOpenCreateForm} />
             <Container>
-                <EventDashboard
-                    events={events}
-                    selectEvent={handleSelectedEvent}
-                    selectedEvent={selectedEvent}
-                    editMode={editMode}
-                    setEditMode={setEditMode}
-                    setSelectedEvent={setSelectedEvent}
-                    createEvent={handleCreateEvent}
-                    editEvent={handleEditEvent}
-                    deleteEvent={handleDeleteEvent}
-                />
+                {eventStore.loadingInitial ? (
+                    <LoadingComponent />
+                ) : (
+                    <EventDashboard
+                        submitting={submitting}
+                        events={eventStore.events}
+                        selectEvent={handleSelectedEvent}
+                        setEditMode={setEditMode}
+                        setSelectedEvent={setSelectedEvent}
+                        createEvent={handleCreateEvent}
+                        editEvent={handleEditEvent}
+                        deleteEvent={handleDeleteEvent}
+                    />
+                )}
             </Container>
         </>
     );
 };
 
-export default App;
+export default observer(App);

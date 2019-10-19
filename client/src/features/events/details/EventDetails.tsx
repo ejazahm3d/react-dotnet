@@ -1,28 +1,40 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Panel, ButtonGroup, Button } from "rsuite";
 import { IEvent } from "../../../app/models/event";
-
+import { observer } from "mobx-react-lite";
+import EventStore from "../../../app/stores/eventStore";
 interface IProps {
-    selectedEvent: IEvent | null;
     setEditMode: (editMode: boolean) => void;
     setSelectedEvent: (event: IEvent | null) => void;
+    submitting: boolean;
 }
 
 const EventDetails: React.FC<IProps> = ({
-    selectedEvent,
     setEditMode,
-    setSelectedEvent
+    setSelectedEvent,
+    submitting
 }) => {
+    const { selectedEvent } = useContext(EventStore);
     return (
         <Panel bordered header={selectedEvent ? selectedEvent.title : null}>
+            <p>{selectedEvent ? selectedEvent.date : null}</p>
             <ButtonGroup justified>
-                <Button appearance="primary" onClick={() => setEditMode(true)}>
+                <Button
+                    loading={submitting}
+                    appearance="primary"
+                    onClick={() => setEditMode(true)}
+                >
                     Edit
                 </Button>
-                <Button onClick={() => setSelectedEvent(null)}>Cancel</Button>
+                <Button
+                    loading={submitting}
+                    onClick={() => setSelectedEvent(null)}
+                >
+                    Cancel
+                </Button>
             </ButtonGroup>
         </Panel>
     );
 };
 
-export default EventDetails;
+export default observer(EventDetails);

@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { List, Tag, Button, FlexboxGrid } from "rsuite";
 import { IEvent } from "../../../app/models/event";
+import { observer } from "mobx-react-lite";
+import EventStore from "../../../app/stores/eventStore";
 interface IProps {
-    events: IEvent[];
-    selectEvent: (id: string) => void;
     deleteEvent: (id: string) => void;
+    submitting: boolean;
 }
-const EventList: React.FC<IProps> = ({ events, selectEvent, deleteEvent }) => {
+const EventList: React.FC<IProps> = ({ deleteEvent, submitting }) => {
+    const { events, selectEvent } = useContext(EventStore);
     return (
         <List bordered>
             {events.map(event => (
@@ -33,6 +35,7 @@ const EventList: React.FC<IProps> = ({ events, selectEvent, deleteEvent }) => {
                                 Details
                             </Button>
                             <Button
+                                loading={submitting}
                                 style={{ marginLeft: 5 }}
                                 color="red"
                                 onClick={() => deleteEvent(event.id)}
@@ -47,4 +50,4 @@ const EventList: React.FC<IProps> = ({ events, selectEvent, deleteEvent }) => {
     );
 };
 
-export default EventList;
+export default observer(EventList);
