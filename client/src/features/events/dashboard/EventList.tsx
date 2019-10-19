@@ -1,17 +1,15 @@
 import React, { useContext } from "react";
 import { List, Tag, Button, FlexboxGrid } from "rsuite";
-import { IEvent } from "../../../app/models/event";
 import { observer } from "mobx-react-lite";
 import EventStore from "../../../app/stores/eventStore";
-interface IProps {
-    deleteEvent: (id: string) => void;
-    submitting: boolean;
-}
-const EventList: React.FC<IProps> = ({ deleteEvent, submitting }) => {
-    const { events, selectEvent } = useContext(EventStore);
+
+const EventList: React.FC = () => {
+    const { eventsByDate, selectEvent, deleteEvent, submitting } = useContext(
+        EventStore
+    );
     return (
         <List bordered>
-            {events.map(event => (
+            {eventsByDate.map(event => (
                 <List.Item key={event.id} style={{ paddingTop: 10 }}>
                     <h5>{event.title}</h5>
                     <p>{event.date}</p>

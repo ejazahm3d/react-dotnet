@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
     Form,
     FormGroup,
@@ -9,23 +9,18 @@ import {
     Button
 } from "rsuite";
 import { IEvent } from "../../../app/models/event";
+import EventStore from "../../../app/stores/eventStore";
 import { v4 as uuid } from "uuid";
+import { observer } from "mobx-react-lite";
 
 interface IProps {
-    setEditMode: (editMode: boolean) => void;
     selectedEvent: IEvent | undefined;
-    createEvent: (event: IEvent) => void;
-    editEvent: (event: IEvent) => void;
-    submitting: boolean;
 }
 
-const EventForm: React.FC<IProps> = ({
-    setEditMode,
-    selectedEvent,
-    createEvent,
-    editEvent,
-    submitting
-}) => {
+const EventForm: React.FC<IProps> = ({ selectedEvent }) => {
+    const { createEvent, editEvent, submitting, cancelFormOpen } = useContext(
+        EventStore
+    );
     const initialzeFrom = (): IEvent => {
         if (selectedEvent) return selectedEvent;
         else
@@ -125,7 +120,7 @@ const EventForm: React.FC<IProps> = ({
                     </Button>
                     <Button
                         loading={submitting}
-                        onClick={() => setEditMode(false)}
+                        onClick={() => cancelFormOpen()}
                     >
                         Cancel
                     </Button>
@@ -135,4 +130,4 @@ const EventForm: React.FC<IProps> = ({
     );
 };
 
-export default EventForm;
+export default observer(EventForm);

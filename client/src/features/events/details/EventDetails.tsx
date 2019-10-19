@@ -1,20 +1,15 @@
 import React, { useContext } from "react";
 import { Panel, ButtonGroup, Button } from "rsuite";
-import { IEvent } from "../../../app/models/event";
 import { observer } from "mobx-react-lite";
 import EventStore from "../../../app/stores/eventStore";
-interface IProps {
-    setEditMode: (editMode: boolean) => void;
-    setSelectedEvent: (event: IEvent | null) => void;
-    submitting: boolean;
-}
 
-const EventDetails: React.FC<IProps> = ({
-    setEditMode,
-    setSelectedEvent,
-    submitting
-}) => {
-    const { selectedEvent } = useContext(EventStore);
+const EventDetails: React.FC = () => {
+    const {
+        selectedEvent,
+        openEditForm,
+        submitting,
+        cancelSelectedEvent
+    } = useContext(EventStore);
     return (
         <Panel bordered header={selectedEvent ? selectedEvent.title : null}>
             <p>{selectedEvent ? selectedEvent.date : null}</p>
@@ -22,13 +17,13 @@ const EventDetails: React.FC<IProps> = ({
                 <Button
                     loading={submitting}
                     appearance="primary"
-                    onClick={() => setEditMode(true)}
+                    onClick={() => openEditForm(selectedEvent!.id)}
                 >
                     Edit
                 </Button>
                 <Button
                     loading={submitting}
-                    onClick={() => setSelectedEvent(null)}
+                    onClick={() => cancelSelectedEvent()}
                 >
                     Cancel
                 </Button>

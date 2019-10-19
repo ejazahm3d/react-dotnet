@@ -1,12 +1,10 @@
 import { Nav, Navbar, Icon } from "rsuite";
+import EventStore from "../../app/stores/eventStore";
+import React, { useContext } from "react";
+import { observer } from "mobx-react-lite";
 
-import React from "react";
-
-interface IProps {
-    handleOpenCreateForm: () => void;
-}
-
-const NavBar: React.FC<IProps> = ({ handleOpenCreateForm }) => {
+const NavBar: React.FC = () => {
+    const { openCreateForm } = useContext(EventStore);
     return (
         <Navbar appearance="inverse" style={{ marginBottom: 20 }}>
             <Navbar.Body>
@@ -15,7 +13,7 @@ const NavBar: React.FC<IProps> = ({ handleOpenCreateForm }) => {
                     <Nav.Item>All Events</Nav.Item>
                     <Nav.Item
                         icon={<Icon icon="plus-square" />}
-                        onClick={() => handleOpenCreateForm()}
+                        onClick={() => openCreateForm()}
                     >
                         Create Event
                     </Nav.Item>
@@ -28,4 +26,4 @@ const NavBar: React.FC<IProps> = ({ handleOpenCreateForm }) => {
     );
 };
 
-export default NavBar;
+export default observer(NavBar);
