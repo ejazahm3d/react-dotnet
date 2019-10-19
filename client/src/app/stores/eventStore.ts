@@ -13,10 +13,26 @@ class ActivityStore {
     @observable submitting = false;
 
     @computed get eventsByDate() {
-        return Array.from(this.eventRegistry.values()).sort(
+        return this.groupEventsByDate(Array.from(this.eventRegistry.values()));
+    }
+
+    groupEventsByDate = (events: IEvent[]) => {
+        const sortedEvents = events.sort(
             (a, b) => Date.parse(a.date) - Date.parse(b.date)
         );
-    }
+        return Object.entries(
+            sortedEvents.reduce(
+                (events, event) => {
+                    const date = event.date.split("T")[0];
+                    events[date] = events[date]
+                        ? [...events[date], event]
+                        : [event];
+                    return events;
+                },
+                {} as { [key: string]: IEvent[] }
+            )
+        );
+    };
 
     @action clearEvent = () => {
         this.selectedEvent = null;
@@ -31,6 +47,7 @@ class ActivityStore {
                 );
                 this.loadingInitial = false;
             });
+            console.log(this.groupEventsByDate(events));
         } catch (error) {
             runInAction("load activities error", () => {
                 this.loadingInitial = false;

@@ -1,50 +1,24 @@
 import React, { useContext } from "react";
-import { List, Tag, Button, FlexboxGrid } from "rsuite";
+import { List } from "rsuite";
 import { observer } from "mobx-react-lite";
 import EventStore from "../../../app/stores/eventStore";
-import { Link } from "react-router-dom";
+import EventListItem from "./EventListItem";
 
 const EventList: React.FC = () => {
-    const { eventsByDate, deleteEvent, submitting } = useContext(EventStore);
+    const { eventsByDate } = useContext(EventStore);
     return (
-        <List bordered>
-            {eventsByDate.map(event => (
-                <List.Item key={event.id} style={{ paddingTop: 10 }}>
-                    <h5>{event.title}</h5>
-                    <p>{event.date}</p>
-                    <p>{event.description}</p>
-                    <p>
-                        {event.city}, {event.venue}
-                    </p>
-
-                    <FlexboxGrid
-                        justify="space-between"
-                        style={{ marginTop: 10 }}
-                    >
-                        <FlexboxGrid.Item>
-                            <Tag color="green">{event.category}</Tag>
-                        </FlexboxGrid.Item>
-                        <FlexboxGrid.Item>
-                            <Button
-                                appearance="primary"
-                                componentClass={Link}
-                                to={`/events/${event.id}`}
-                            >
-                                Details
-                            </Button>
-                            <Button
-                                loading={submitting}
-                                style={{ marginLeft: 5 }}
-                                color="red"
-                                onClick={() => deleteEvent(event.id)}
-                            >
-                                Delete
-                            </Button>
-                        </FlexboxGrid.Item>
-                    </FlexboxGrid>
-                </List.Item>
+        <>
+            {eventsByDate.map(([group, events]) => (
+                <div key={group}>
+                    <h5 style={{ marginBottom: 10 }}>{group}</h5>
+                    <List bordered>
+                        {events.map(event => (
+                            <EventListItem key={event.id} event={event} />
+                        ))}
+                    </List>
+                </div>
             ))}
-        </List>
+        </>
     );
 };
 

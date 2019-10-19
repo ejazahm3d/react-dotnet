@@ -11,18 +11,33 @@ import EventDetails from "../../features/events/details/EventDetails";
 const App: React.FC<RouteComponentProps> = ({ location }) => {
     return (
         <>
-            <NavBar />
-            <Container>
-                <Route exact path="/" component={HomePage} />
-                <Route exact path="/events" component={EventDashboard} />
-                <Route exact path="/events/:id" component={EventDetails} />
-                <Route
-                    exact
-                    key={location.key}
-                    path={["/createEvent", "/manage/:id"]}
-                    component={EventForm}
-                />
-            </Container>
+            <Route exact path="/" component={HomePage} />
+            <Route
+                path="/(.+)"
+                render={() => (
+                    <>
+                        <NavBar />
+                        <Container>
+                            <Route
+                                exact
+                                path="/events"
+                                component={EventDashboard}
+                            />
+                            <Route
+                                exact
+                                path="/events/:id"
+                                component={EventDetails}
+                            />
+                            <Route
+                                exact
+                                key={location.key}
+                                path={["/createEvent", "/manage/:id"]}
+                                component={EventForm}
+                            />
+                        </Container>
+                    </>
+                )}
+            />
         </>
     );
 };
