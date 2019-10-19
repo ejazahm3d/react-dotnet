@@ -26,7 +26,7 @@ const EventForm: React.FC<RouteComponentProps<DetailParams>> = ({
         createEvent,
         editEvent,
         submitting,
-        cancelFormOpen,
+
         selectedEvent,
         loadEvent,
         clearEvent
@@ -149,7 +149,7 @@ const EventForm: React.FC<RouteComponentProps<DetailParams>> = ({
                     </Button>
                     <Button
                         loading={submitting}
-                        onClick={() => cancelFormOpen()}
+                        onClick={() => history.push("/events")}
                     >
                         Cancel
                     </Button>

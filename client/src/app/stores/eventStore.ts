@@ -10,7 +10,6 @@ class ActivityStore {
     @observable events: IEvent[] = [];
     @observable selectedEvent: IEvent | null = null;
     @observable loadingInitial = false;
-    @observable editMode = false;
     @observable submitting = false;
 
     @computed get eventsByDate() {
@@ -70,7 +69,6 @@ class ActivityStore {
             await agent.Events.create(event);
             runInAction("create event", () => {
                 this.eventRegistry.set(event.id, event);
-                this.editMode = false;
                 this.submitting = false;
             });
         } catch (error) {
@@ -88,7 +86,6 @@ class ActivityStore {
             runInAction("Edit event", () => {
                 this.eventRegistry.set(event.id, event);
                 this.selectedEvent = event;
-                this.editMode = false;
                 this.submitting = false;
             });
         } catch (error) {
@@ -114,28 +111,6 @@ class ActivityStore {
             });
             console.log(error);
         }
-    };
-
-    @action openCreateForm = () => {
-        this.editMode = true;
-        this.selectedEvent = null;
-    };
-
-    @action openEditForm = (id: string) => {
-        this.selectedEvent = this.eventRegistry.get(id);
-        this.editMode = true;
-    };
-
-    @action cancelSelectedEvent = () => {
-        this.selectedEvent = null;
-    };
-
-    @action cancelFormOpen = () => {
-        this.editMode = false;
-    };
-    @action selectEvent = (id: string) => {
-        this.selectedEvent = this.eventRegistry.get(id);
-        this.editMode = false;
     };
 }
 

@@ -5,9 +5,7 @@ import EventStore from "../../../app/stores/eventStore";
 import { Link } from "react-router-dom";
 
 const EventList: React.FC = () => {
-    const { eventsByDate, selectEvent, deleteEvent, submitting } = useContext(
-        EventStore
-    );
+    const { eventsByDate, deleteEvent, submitting } = useContext(EventStore);
     return (
         <List bordered>
             {eventsByDate.map(event => (
@@ -29,7 +27,6 @@ const EventList: React.FC = () => {
                         <FlexboxGrid.Item>
                             <Button
                                 appearance="primary"
-                                onClick={() => selectEvent(event.id)}
                                 componentClass={Link}
                                 to={`/events/${event.id}`}
                             >
