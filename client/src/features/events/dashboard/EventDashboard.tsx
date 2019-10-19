@@ -14,13 +14,7 @@ const EventDashboard: React.FC = () => {
                 <EventList />
             </FlexboxGrid.Item>
             <FlexboxGrid.Item colspan={8}>
-                {selectedEvent && !editMode && <EventDetails />}
-                {editMode && (
-                    <EventForm
-                        key={(selectedEvent && selectedEvent.id) || 0}
-                        selectedEvent={selectedEvent}
-                    />
-                )}
+                <h2>Event Filters</h2>
             </FlexboxGrid.Item>
         </FlexboxGrid>
     );

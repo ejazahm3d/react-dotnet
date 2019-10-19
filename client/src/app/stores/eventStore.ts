@@ -36,6 +36,30 @@ class ActivityStore {
         }
     };
 
+    @action loadEvent = async (id: string) => {
+        let event = this.getEvent(id);
+        if (event) {
+            this.selectedEvent = event;
+        } else {
+            this.loadingInitial = true;
+            try {
+                event = await agent.Events.details(id);
+                runInAction("getting single event", () => {
+                    this.selectedEvent = event;
+                    this.loadingInitial = false;
+                });
+            } catch (error) {
+                console.log(error);
+                runInAction("getting single event error", () => {
+                    this.loadingInitial = false;
+                });
+            }
+        }
+    };
+
+    getEvent = (id: string) => {
+        return this.eventRegistry.get(id);
+    };
     @action createEvent = async (event: IEvent) => {
         this.submitting = true;
         try {

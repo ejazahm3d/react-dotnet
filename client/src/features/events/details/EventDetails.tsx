@@ -1,15 +1,33 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Panel, ButtonGroup, Button } from "rsuite";
 import { observer } from "mobx-react-lite";
 import EventStore from "../../../app/stores/eventStore";
+import { RouteComponentProps } from "react-router";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
-const EventDetails: React.FC = () => {
+interface DetailParams {
+    id: string;
+}
+
+const EventDetails: React.FC<RouteComponentProps<DetailParams>> = ({
+    match,
+    history
+}) => {
     const {
         selectedEvent,
         openEditForm,
         submitting,
-        cancelSelectedEvent
+        cancelSelectedEvent,
+        loadEvent,
+        loadingInitial
     } = useContext(EventStore);
+
+    useEffect(() => {
+        loadEvent(match.params.id);
+    }, [loadEvent]);
+
+    if (loadingInitial || !selectedEvent) return <LoadingComponent />;
+
     return (
         <Panel bordered header={selectedEvent ? selectedEvent.title : null}>
             <p>{selectedEvent ? selectedEvent.date : null}</p>
@@ -23,7 +41,7 @@ const EventDetails: React.FC = () => {
                 </Button>
                 <Button
                     loading={submitting}
-                    onClick={() => cancelSelectedEvent()}
+                    onClick={() => history.push("/events")}
                 >
                     Cancel
                 </Button>
