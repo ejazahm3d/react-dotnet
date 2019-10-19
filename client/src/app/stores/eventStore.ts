@@ -8,7 +8,7 @@ configure({ enforceActions: "always" });
 class ActivityStore {
     @observable eventRegistry = new Map();
     @observable events: IEvent[] = [];
-    @observable selectedEvent: IEvent | undefined;
+    @observable selectedEvent: IEvent | null = null;
     @observable loadingInitial = false;
     @observable editMode = false;
     @observable submitting = false;
@@ -18,6 +18,10 @@ class ActivityStore {
             (a, b) => Date.parse(a.date) - Date.parse(b.date)
         );
     }
+
+    @action clearEvent = () => {
+        this.selectedEvent = null;
+    };
     @action loadEvents = async () => {
         this.loadingInitial = true;
         try {
@@ -114,7 +118,7 @@ class ActivityStore {
 
     @action openCreateForm = () => {
         this.editMode = true;
-        this.selectedEvent = undefined;
+        this.selectedEvent = null;
     };
 
     @action openEditForm = (id: string) => {
@@ -123,7 +127,7 @@ class ActivityStore {
     };
 
     @action cancelSelectedEvent = () => {
-        this.selectedEvent = undefined;
+        this.selectedEvent = null;
     };
 
     @action cancelFormOpen = () => {

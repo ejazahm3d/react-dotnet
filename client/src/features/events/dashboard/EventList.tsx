@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { List, Tag, Button, FlexboxGrid } from "rsuite";
 import { observer } from "mobx-react-lite";
 import EventStore from "../../../app/stores/eventStore";
-import { NavLink, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const EventList: React.FC = () => {
     const { eventsByDate, selectEvent, deleteEvent, submitting } = useContext(

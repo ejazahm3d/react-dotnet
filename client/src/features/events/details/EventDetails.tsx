@@ -1,9 +1,10 @@
 import React, { useContext, useEffect } from "react";
-import { Panel, ButtonGroup, Button } from "rsuite";
+import { Panel, Button, FlexboxGrid } from "rsuite";
 import { observer } from "mobx-react-lite";
 import EventStore from "../../../app/stores/eventStore";
 import { RouteComponentProps } from "react-router";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { Link } from "react-router-dom";
 
 interface DetailParams {
     id: string;
@@ -13,39 +14,38 @@ const EventDetails: React.FC<RouteComponentProps<DetailParams>> = ({
     match,
     history
 }) => {
-    const {
-        selectedEvent,
-        openEditForm,
-        submitting,
-        cancelSelectedEvent,
-        loadEvent,
-        loadingInitial
-    } = useContext(EventStore);
+    const { selectedEvent, submitting, loadEvent, loadingInitial } = useContext(
+        EventStore
+    );
 
     useEffect(() => {
         loadEvent(match.params.id);
-    }, [loadEvent]);
+    }, [loadEvent, match.params.id]);
 
     if (loadingInitial || !selectedEvent) return <LoadingComponent />;
 
     return (
         <Panel bordered header={selectedEvent ? selectedEvent.title : null}>
             <p>{selectedEvent ? selectedEvent.date : null}</p>
-            <ButtonGroup justified>
+            <FlexboxGrid>
                 <Button
+                    block
                     loading={submitting}
                     appearance="primary"
-                    onClick={() => openEditForm(selectedEvent!.id)}
+                    componentClass={Link}
+                    to={`/manage/${selectedEvent.id}`}
                 >
                     Edit
                 </Button>
+
                 <Button
+                    block
                     loading={submitting}
                     onClick={() => history.push("/events")}
                 >
                     Cancel
                 </Button>
-            </ButtonGroup>
+            </FlexboxGrid>
         </Panel>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
     Form,
     FormGroup,
@@ -12,16 +12,27 @@ import { IEvent } from "../../../app/models/event";
 import EventStore from "../../../app/stores/eventStore";
 import { v4 as uuid } from "uuid";
 import { observer } from "mobx-react-lite";
+import { RouteComponentProps } from "react-router";
 
-interface IProps {
-    selectedEvent: IEvent | undefined;
+interface DetailParams {
+    id: string;
 }
 
-const EventForm: React.FC<IProps> = ({ selectedEvent }) => {
-    const { createEvent, editEvent, submitting, cancelFormOpen } = useContext(
-        EventStore
-    );
-    const initialzeFrom = (): IEvent => {
+const EventForm: React.FC<RouteComponentProps<DetailParams>> = ({
+    match,
+    history
+}) => {
+    const {
+        createEvent,
+        editEvent,
+        submitting,
+        cancelFormOpen,
+        selectedEvent,
+        loadEvent,
+        clearEvent
+    } = useContext(EventStore);
+
+    const initialzeForm = (): IEvent => {
         if (selectedEvent) return selectedEvent;
         else
             return {
@@ -34,8 +45,24 @@ const EventForm: React.FC<IProps> = ({ selectedEvent }) => {
                 venue: ""
             };
     };
+    const [event, setEvent] = useState<IEvent>(initialzeForm);
+    useEffect(() => {
+        if (match.params.id && event.id.length === 0) {
+            loadEvent(match.params.id).then(
+                () => selectedEvent && setEvent(selectedEvent)
+            );
+        }
 
-    const [event, setEvent] = useState<IEvent>(initialzeFrom);
+        return () => {
+            clearEvent();
+        };
+    }, [
+        loadEvent,
+        clearEvent,
+        match.params.id,
+        selectedEvent,
+        event.id.length
+    ]);
 
     const handleInputChange = (newText: string, e: any) => {
         console.log(newText, e.target.name);
@@ -52,9 +79,11 @@ const EventForm: React.FC<IProps> = ({ selectedEvent }) => {
                 ...event,
                 id: uuid()
             };
-            createEvent(newEvent);
+            createEvent(newEvent).then(() =>
+                history.push(`/events/${newEvent.id}`)
+            );
         } else {
-            editEvent(event);
+            editEvent(event).then(() => history.push(`/events/${event.id}`));
         }
     };
 
